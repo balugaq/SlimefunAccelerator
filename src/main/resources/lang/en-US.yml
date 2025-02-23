@@ -1,0 +1,31 @@
+# Allows color codes
+messages:
+  debug-prefix: "&b[Debug] "
+  commands:
+    no-permission: "You don't have permission to use this command!"
+    player-only: "This command can only be used by players!"
+    console-only: "This command can only be used by the console!"
+    not-slimefun-item-in-hand: "You must be holding a Slimefun item in your hand!"
+    click-to-copy: "Click to copy"
+    help:
+      header: "&b[Help] &fHelp Commands."
+      help: "&f/slimefunaccelerator help &7- &fShows this help message."
+      reload: "&f/slimefunaccelerator reload &7- &fReloads the plugin."
+      version: "&f/slimefunaccelerator version &7- &fShows the plugin version."
+    reload:
+      success: "&aReloaded the plugin successfully."
+    version:
+      # {version} = plugin version
+      success: "&aVersion: &f{version}"
+    id:
+      # {id} = item ID
+      success: "&aItem ID: &f{id}"
+  load:
+    # {id} = item ID
+    added-accelerates: "Added predication for {id}"
+    no-configured-accelerates: "You have not configured the SlimefunAccelerator plugin. Please check the example config.yml file."
+    invalid-accelerate-key: "Invalid accelerate key in config.yml: "
+    # {path} = path to config file
+    path: "Path: {path}"
+    # {value} = value of config option
+    value: "Value: {value}"

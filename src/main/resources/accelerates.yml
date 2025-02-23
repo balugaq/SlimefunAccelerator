@@ -1,0 +1,15 @@
+accelerates:
+  thread1:
+    enabled: true
+    async: true
+    period: 10 # gt
+    delay: 10 # gt
+    items:
+      - "__EXAMPLE_ITEM"
+  thread2:
+    enabled: true
+    async: true
+    period: 10 # gt
+    delay: 10 # gt
+    items:
+      - "__EXAMPLE_ITEM"

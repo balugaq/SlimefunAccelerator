@@ -1,0 +1,32 @@
+# Allows color codes
+messages:
+  debug-prefix: "&b[Debug] "
+  commands:
+    no-permission: "你没有权限使用这个指令!"
+    player-only: "这个指令只能由玩家使用!"
+    console-only: "这个指令只能由控制台使用!"
+    not-slimefun-item-in-hand: "你必须手持 Slimefun 物品才能使用这个指令!"
+    click-to-copy: "点击复制"
+    help:
+      header: "&b[Help] &f帮助."
+      help: "&f/slimefunaccelerator help &7- &f显示帮助菜单."
+      reload: "&f/slimefunaccelerator reload &7- &f重新加载插件."
+      version: "&f/slimefunaccelerator version &7- &f显示插件版本."
+    reload:
+      success: "&a插件已重新加载."
+    version:
+      # {version} = plugin version
+      success: "&a插件版本: &f{version}"
+    id:
+      # {id} = item ID
+      success: "&a物品 ID: &f{id}"
+  load:
+    failed-auto-update: "&c自动更新失败: {message}" # {message} = error message
+    # {id} = item ID
+    added-accelerates: "Accelerated for {id}"
+    no-configured-accelerates: "你还没有开始配置插件!"
+    invalid-accelerate-key: "无效的物品: "
+    # {path} = path to config file
+    path: "位置: {path}"
+    # {value} = value of config option
+    value: "值: {value}"
