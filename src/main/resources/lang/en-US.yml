@@ -22,7 +22,7 @@ messages:
       success: "&aItem ID: &f{id}"
   load:
     # {id} = item ID
-    added-accelerates: "Added predication for {id}"
+    added-accelerates: "Accelerated for {id}"
     no-configured-accelerates: "You have not configured the SlimefunAccelerator plugin. Please check the example config.yml file."
     invalid-accelerate-key: "Invalid accelerate key in config.yml: "
     # {path} = path to config file

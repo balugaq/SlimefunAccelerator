@@ -161,9 +161,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.Slimefun</groupId>
+            <groupId>com.github.SlimefunGuguProject</groupId>
             <artifactId>Slimefun4</artifactId>
-            <version>RC-37</version>
+            <version>38953fe13a</version>
             <scope>provided</scope>
         </dependency>
 

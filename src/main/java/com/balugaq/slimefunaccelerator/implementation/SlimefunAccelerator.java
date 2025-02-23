@@ -1,7 +1,8 @@
 package com.balugaq.slimefunaccelerator.implementation;
 
+import com.balugaq.slimefunaccelerator.api.utils.Accelerates;
 import com.balugaq.slimefunaccelerator.api.utils.Lang;
-import com.balugaq.slimefunaccelerator.core.managers.AcceleratesLoader;
+import com.balugaq.slimefunaccelerator.core.listeners.Accelerator;
 import com.balugaq.slimefunaccelerator.core.managers.CommandManager;
 import com.balugaq.slimefunaccelerator.core.managers.ConfigManager;
 import com.balugaq.slimefunaccelerator.core.managers.IntegrationManager;
@@ -64,8 +65,6 @@ public class SlimefunAccelerator extends JavaPlugin implements SlimefunAddon {
         listenerManager = new ListenerManager(this);
         getListenerManager().setup();
         getListenerManager().load();
-        getLogger().info("Loading accelerates...");
-        AcceleratesLoader.loadPredications();
 
         getLogger().info("Checking for updates...");
         switch (getConfigManager().getBuildStation()) {
@@ -116,6 +115,8 @@ public class SlimefunAccelerator extends JavaPlugin implements SlimefunAddon {
         enabledPlugin = false;
         getLogger().info("Disabling SlimefunAccelerator...");
         getLogger().info("Unloading listeners...");
+        Accelerator.shutdown();
+        Accelerates.shutdown();
         getListenerManager().unload();
         getLogger().info("SlimefunAccelerator disabled.");
     }

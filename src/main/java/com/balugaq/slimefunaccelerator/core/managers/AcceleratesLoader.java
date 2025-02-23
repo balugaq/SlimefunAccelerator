@@ -1,10 +1,13 @@
 package com.balugaq.slimefunaccelerator.core.managers;
 
+import com.balugaq.slimefunaccelerator.api.utils.Accelerates;
 import com.balugaq.slimefunaccelerator.api.utils.Debug;
 import com.balugaq.slimefunaccelerator.api.utils.Lang;
 import com.balugaq.slimefunaccelerator.implementation.SlimefunAccelerator;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import lombok.experimental.UtilityClass;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -17,10 +20,12 @@ public class AcceleratesLoader {
     public static final String ASYNC_KEY = "async";
     public static final String PERIOD_KEY = "period";
     public static final String DELAY_KEY = "delay";
+    public static final String ADDONS_KEY = "addons";
     public static final String ITEMS_KEY = "items";
     public static final String EXAMPLE_ITEM = "__EXAMPLE_ITEM";
+    public static final String EXAMPLE_ADDON = "__ExampleAddon";
 
-    public static void loadPredications() {
+    public static void loadAccelerates() {
         boolean configured = true;
         boolean configuredDifferentItem = false;
         FileConfiguration configuration = SlimefunAccelerator.getInstance().getConfigManager().getBans();
@@ -40,9 +45,9 @@ public class AcceleratesLoader {
             }
 
             boolean enabled = groupSection.getBoolean(ENABLED_KEY, true);
-            if (!enabled) {
-                continue;
-            }
+            boolean async = groupSection.getBoolean(ASYNC_KEY, true);
+            int period = groupSection.getInt(PERIOD_KEY, 10);
+            int delay = groupSection.getInt(DELAY_KEY, 10);
 
             List<String> items = groupSection.getStringList(ITEMS_KEY);
             for (String rid : items) {
@@ -58,9 +63,34 @@ public class AcceleratesLoader {
                     continue;
                 }
 
+                BlockTicker ticker = slimefunItem.getBlockTicker();
+                if (ticker == null) {
+                    invalidKey(ACCELERATES_KEY + "." + threadKey + "." + ITEMS_KEY, id);
+                    continue;
+                }
 
+                Accelerates.addAccelerate(threadKey, id);
+                Accelerates.addAccelerateSettings(threadKey, enabled, async, period, delay);
+                Accelerates.getTickers().put(id, ticker);
                 SlimefunAccelerator.getInstance().getLogger().info(Lang.getMessage("load.added-accelerates", "id", id));
                 configuredDifferentItem = true;
+            }
+            List<String> addons = groupSection.getStringList(ADDONS_KEY);
+            if (addons.size() == 1 && addons.get(0).equalsIgnoreCase(EXAMPLE_ADDON)) {
+                configured = false;
+                continue;
+            }
+
+            for (SlimefunItem slimefunItem : Slimefun.getRegistry().getAllSlimefunItems()) {
+                for (String addon : addons) {
+                    if (slimefunItem.getAddon().getName().equalsIgnoreCase(addon)) {
+                        Accelerates.addAccelerate(threadKey, slimefunItem.getId());
+                        Accelerates.addAccelerateSettings(threadKey, enabled, async, period, delay);
+                        Accelerates.getTickers().put(slimefunItem.getId(), slimefunItem.getBlockTicker());
+                        SlimefunAccelerator.getInstance().getLogger().info(Lang.getMessage("load.added-accelerates", "id", slimefunItem.getId()));
+                        configuredDifferentItem = true;
+                    }
+                }
             }
         }
 

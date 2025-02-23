@@ -2,6 +2,7 @@ package com.balugaq.slimefunaccelerator.core.commands.subcommands;
 
 import com.balugaq.slimefunaccelerator.api.utils.Lang;
 import com.balugaq.slimefunaccelerator.core.commands.SubCommand;
+import com.balugaq.slimefunaccelerator.core.listeners.Accelerator;
 import com.balugaq.slimefunaccelerator.implementation.SlimefunAccelerator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -33,6 +34,7 @@ public class ReloadCommand extends SubCommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         SlimefunAccelerator.getInstance().onDisable();
         SlimefunAccelerator.getInstance().onEnable();
+        Accelerator.load();
         sender.sendMessage(Lang.getMessage("commands.reload.success"));
         return true;
     }

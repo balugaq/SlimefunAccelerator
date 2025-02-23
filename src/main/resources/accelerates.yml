@@ -1,15 +1,30 @@
 accelerates:
   thread1:
-    enabled: true
+    enabled: false
     async: true
     period: 10 # gt
     delay: 10 # gt
+    addons:
+      - "__ExampleAddon"
     items:
       - "__EXAMPLE_ITEM"
   thread2:
-    enabled: true
+    enabled: false
     async: true
     period: 10 # gt
     delay: 10 # gt
     items:
       - "__EXAMPLE_ITEM"
+  example:
+    enabled: false
+    async: true
+    period: 10 # gt
+    delay: 10 # gt
+    addons:
+      - "Networks"
+      - "Networks-Changed"
+      - "Networks-Modified"
+      - "SlimeAEPlugin"
+    items:
+      - "LOGITECH_LINE_CARGO"
+      - "LOGITECH_ADV_LINE_CARGO"
