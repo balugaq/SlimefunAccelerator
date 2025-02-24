@@ -8,10 +8,10 @@ public class Lang {
         return SlimefunAccelerator.getInstance().getLocalizationService().getString("messages." + path);
     }
 
-    public static @NotNull String getMessage(String path, Object... args) {
+    public static @NotNull String getMessage(String path, Object @NotNull ... args) {
         String message = getMessage(path);
         for (int i = 0; i < args.length; i += 2) {
-            message = message.replace("{" + args[i] + "}", args[i+1].toString());
+            message = message.replace("{" + args[i] + "}", args[i + 1].toString());
         }
         return message;
     }

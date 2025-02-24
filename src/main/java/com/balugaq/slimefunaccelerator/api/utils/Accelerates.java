@@ -24,24 +24,27 @@ public class Accelerates {
     @Getter
     public static final Map<String, Set<SlimefunItem>> accelerates = new HashMap<>();
 
-    public static void addAccelerate(String group, Collection<String> ids) {
+    public static void addAccelerate(String group, @NotNull Collection<String> ids) {
         for (String id : ids) {
             addAccelerate(group, id);
         }
     }
-    public static void addAccelerate(String group, String id) {
+
+    public static void addAccelerate(String group, @NotNull String id) {
         SlimefunItem item = SlimefunItem.getById(id);
         if (!accelerates.containsKey(group)) {
             accelerates.put(group, new HashSet<>());
         }
         accelerates.get(group).add(item);
     }
-    public static void accelerate(String group, Collection<SlimefunItem> items) {
+
+    public static void accelerate(String group, @NotNull Collection<SlimefunItem> items) {
         if (!accelerates.containsKey(group)) {
             accelerates.put(group, new HashSet<>());
         }
         accelerates.get(group).addAll(items);
     }
+
     public static void accelerate(String group, SlimefunItem item) {
         if (!accelerates.containsKey(group)) {
             accelerates.put(group, new HashSet<>());
@@ -59,25 +62,29 @@ public class Accelerates {
         return accelerates;
     }
 
-    public static void removeAccelerate(String group, Collection<String> ids) {
+    public static void removeAccelerate(String group, @NotNull Collection<String> ids) {
         for (String id : ids) {
             removeAccelerate(group, id);
         }
     }
-    public static void removeAccelerate(String group, String id) {
+
+    public static void removeAccelerate(String group, @NotNull String id) {
         SlimefunItem item = SlimefunItem.getById(id);
         if (accelerates.containsKey(group)) {
             accelerates.get(group).remove(item);
         }
     }
+
     public static void removeAccelerate(String group) {
         accelerates.remove(group);
     }
-    public static void rmAccelerate(String group, Collection<SlimefunItem> items) {
+
+    public static void rmAccelerate(String group, @NotNull Collection<SlimefunItem> items) {
         for (SlimefunItem item : items) {
             rmAccelerate(group, item);
         }
     }
+
     public static void rmAccelerate(String group, SlimefunItem item) {
         if (accelerates.containsKey(group)) {
             accelerates.get(group).remove(item);
@@ -90,8 +97,8 @@ public class Accelerates {
         }
     }
 
-    public static void addAccelerateSettings(String group, boolean enabled, boolean async, int period, int delay) {
-        addAccelerateSettings(group, new AcceleratorSettings(enabled, async, period, delay));
+    public static void addAccelerateSettings(String group, boolean enabled, boolean async, int delay, int period, boolean removeOriginalTicker, boolean enabledExtraTicker, boolean tickUnload, int extraTickerDelay, int extraTickerPeriod) {
+        addAccelerateSettings(group, new AcceleratorSettings(enabled, async, delay, period, removeOriginalTicker, enabledExtraTicker, tickUnload, extraTickerDelay, extraTickerPeriod));
     }
 
     public static void addAccelerateSettings(String group, AcceleratorSettings settings) {

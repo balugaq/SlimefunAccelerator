@@ -1,6 +1,8 @@
 package com.balugaq.slimefunaccelerator.core.managers;
 
 import com.balugaq.slimefunaccelerator.core.listeners.Accelerator;
+import com.balugaq.slimefunaccelerator.core.listeners.ExtraTickerCNVersion;
+import com.balugaq.slimefunaccelerator.implementation.SlimefunAccelerator;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -23,6 +25,9 @@ public class ListenerManager {
 
     public void setup() {
         listeners.add(new Accelerator());
+        if (SlimefunAccelerator.getInstance().getIntegrationManager().isCNSlimefun()) {
+            listeners.add(new ExtraTickerCNVersion());
+        }
     }
 
     public void load() {

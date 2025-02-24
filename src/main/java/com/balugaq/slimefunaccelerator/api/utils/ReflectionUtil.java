@@ -30,7 +30,7 @@ public class ReflectionUtil {
         return true;
     }
 
-    public static <T> boolean setValue(@NotNull Object object, @NotNull Class<T> clazz, String field, Object value) {
+    public static <T> boolean setValue(@NotNull Object object, @NotNull Class<T> clazz, @NotNull String field, Object value) {
         try {
             Field declaredField = clazz.getDeclaredField(field);
             declaredField.setAccessible(true);

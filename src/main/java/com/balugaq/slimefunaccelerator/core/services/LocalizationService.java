@@ -65,8 +65,8 @@ public class LocalizationService {
     private String itemGroupKey = "categories";
     private String itemsKey = "items";
     private String recipesKey = "recipes";
-    private @NotNull String colorTagRegex = "<[a-zA-Z0-9_]+>";
-    private @NotNull Pattern pattern = Pattern.compile(this.colorTagRegex);
+    private final @NotNull String colorTagRegex = "<[a-zA-Z0-9_]+>";
+    private final @NotNull Pattern pattern = Pattern.compile(this.colorTagRegex);
 
     @ParametersAreNonnullByDefault
     public LocalizationService(JavaPlugin plugin) {
@@ -308,7 +308,7 @@ public class LocalizationService {
         Preconditions.checkArgument(itemStack != null, MSG_ITEMSTACK_NULL);
         if (extraLore != null && extraLore.length != 0) {
             ItemMeta meta = itemStack.getItemMeta();
-            List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList();
+            List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
             lore.addAll(color(Arrays.asList(extraLore)));
             meta.setLore(lore);
             itemStack.setItemMeta(meta);

@@ -18,10 +18,16 @@ public class AcceleratesLoader {
     public static final String ACCELERATES_KEY = "accelerates";
     public static final String ENABLED_KEY = "enabled";
     public static final String ASYNC_KEY = "async";
-    public static final String PERIOD_KEY = "period";
     public static final String DELAY_KEY = "delay";
+    public static final String PERIOD_KEY = "period";
     public static final String ADDONS_KEY = "addons";
     public static final String ITEMS_KEY = "items";
+    public static final String EXCLUDE_KEY = "excludes";
+    public static final String REMOVE_ORIGINAL_TICKER_KEY = "remove-original-ticker";
+    public static final String EXTRA_TICKER_ENABLED_KEY = "extra-ticker.enabled";
+    public static final String TICK_UNLOAD_KEY = "extra-ticker.tick-unload";
+    public static final String EXTRA_TICKER_DELAY_KEY = "extra-ticker.delay";
+    public static final String EXTRA_TICKER_PERIOD_KEY = "extra-ticker.period";
     public static final String EXAMPLE_ITEM = "__EXAMPLE_ITEM";
     public static final String EXAMPLE_ADDON = "__ExampleAddon";
 
@@ -48,10 +54,20 @@ public class AcceleratesLoader {
             boolean async = groupSection.getBoolean(ASYNC_KEY, true);
             int period = groupSection.getInt(PERIOD_KEY, 10);
             int delay = groupSection.getInt(DELAY_KEY, 10);
+            boolean removeOriginalTicker = groupSection.getBoolean(REMOVE_ORIGINAL_TICKER_KEY, false);
+            boolean extraTickerEnabled = groupSection.getBoolean(EXTRA_TICKER_ENABLED_KEY, false);
+            boolean tickUnload = groupSection.getBoolean(TICK_UNLOAD_KEY, false);
+            int extraTickerDelay = groupSection.getInt(EXTRA_TICKER_DELAY_KEY, 10);
+            int extraTickerPeriod = groupSection.getInt(EXTRA_TICKER_PERIOD_KEY, 10);
 
+            List<String> excludes = groupSection.getStringList(EXCLUDE_KEY);
+            excludes.replaceAll(String::toUpperCase);
             List<String> items = groupSection.getStringList(ITEMS_KEY);
             for (String rid : items) {
                 String id = rid.toUpperCase();
+                if (excludes.contains(id)) {
+                    continue;
+                }
                 SlimefunItem slimefunItem = SlimefunItem.getById(id);
                 if (slimefunItem == null) {
                     if (id.equalsIgnoreCase(EXAMPLE_ITEM)) {
@@ -70,7 +86,7 @@ public class AcceleratesLoader {
                 }
 
                 Accelerates.addAccelerate(threadKey, id);
-                Accelerates.addAccelerateSettings(threadKey, enabled, async, period, delay);
+                Accelerates.addAccelerateSettings(threadKey, enabled, async, delay, period, removeOriginalTicker, extraTickerEnabled, tickUnload, extraTickerDelay, extraTickerPeriod);
                 Accelerates.getTickers().put(id, ticker);
                 SlimefunAccelerator.getInstance().getLogger().info(Lang.getMessage("load.added-accelerates", "id", id));
                 configuredDifferentItem = true;
@@ -82,10 +98,13 @@ public class AcceleratesLoader {
             }
 
             for (SlimefunItem slimefunItem : Slimefun.getRegistry().getAllSlimefunItems()) {
+                if (excludes.contains(slimefunItem.getId().toUpperCase())) {
+                    continue;
+                }
                 for (String addon : addons) {
                     if (slimefunItem.getAddon().getName().equalsIgnoreCase(addon)) {
                         Accelerates.addAccelerate(threadKey, slimefunItem.getId());
-                        Accelerates.addAccelerateSettings(threadKey, enabled, async, period, delay);
+                        Accelerates.addAccelerateSettings(threadKey, enabled, async, delay, period, removeOriginalTicker, extraTickerEnabled, tickUnload, extraTickerDelay, extraTickerPeriod);
                         Accelerates.getTickers().put(slimefunItem.getId(), slimefunItem.getBlockTicker());
                         SlimefunAccelerator.getInstance().getLogger().info(Lang.getMessage("load.added-accelerates", "id", slimefunItem.getId()));
                         configuredDifferentItem = true;

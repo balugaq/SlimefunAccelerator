@@ -5,7 +5,7 @@ auto-update: true
 build-station: "Guizhan" # Expected "Guizhan" or "Blob"
 
 # Do not change this value unless you know what you are doing.
-config-version: C_20250223_1
+config-version: C_20250224_1
 
 # Do not change this value unless you know what you are doing.
 debug: false

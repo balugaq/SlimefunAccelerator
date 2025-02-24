@@ -8,12 +8,22 @@ accelerates:
       - "__ExampleAddon"
     items:
       - "__EXAMPLE_ITEM"
+    excludes:
+      - "__EXAMPLE_ITEM"
+    remove-original-ticker: false
+    extra-ticker:
+      enabled: false
+      tick-unload: false
+      period: 10 # gt
+      delay: 10 # gt
   thread2:
     enabled: false
     async: true
     period: 10 # gt
     delay: 10 # gt
     items:
+      - "__EXAMPLE_ITEM"
+    excludes:
       - "__EXAMPLE_ITEM"
   example:
     enabled: false
