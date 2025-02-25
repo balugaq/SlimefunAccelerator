@@ -7,6 +7,7 @@ import com.balugaq.slimefunaccelerator.core.managers.AcceleratesLoader;
 import com.balugaq.slimefunaccelerator.implementation.SlimefunAccelerator;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.api.events.BlockPlacerPlaceEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinalizedEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -20,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import java.util.function.BiConsumer;
 
 @SuppressWarnings("deprecation")
 public class Accelerator implements Listener {
+    public static final int EXTRA_TICKER_FLAG = 0b00000001;
     public static final Map<String, Set<Location>> allTickerLocations = new ConcurrentHashMap<>(16);
     public static final Map<SlimefunItem, BlockTicker> originalTickers = new ConcurrentHashMap<>(16);
     public static final boolean isCNSlimefun = SlimefunAccelerator.getInstance().getIntegrationManager().isCNSlimefun();
@@ -85,12 +88,28 @@ public class Accelerator implements Listener {
             if (isCNSlimefun) {
                 SlimefunBlockData config = StorageCacheUtils.getBlock(location);
                 if (config == null) {
+                    if (((int) location.getYaw() & EXTRA_TICKER_FLAG) != 0) {
+                        Set<Location> extra = allTickerLocations.get(item.getId());
+                        if (extra != null) {
+                            synchronized (extra) {
+                                extra.remove(location);
+                            }
+                        }
+                    }
                     continue;
                 }
                 Accelerates.getTickers().get(item.getId()).tick(location.getBlock(), item, config);
             } else {
                 Config config = BlockStorage.getLocationInfo(location);
                 if (config == null) {
+                    if (((int) location.getYaw() & EXTRA_TICKER_FLAG) != 0) {
+                        Set<Location> extra = allTickerLocations.get(item.getId());
+                        if (extra != null) {
+                            synchronized (extra) {
+                                extra.remove(location);
+                            }
+                        }
+                    }
                     continue;
                 }
                 Accelerates.getTickers().get(item.getId()).tick(location.getBlock(), item, config);
@@ -213,7 +232,6 @@ public class Accelerator implements Listener {
             Accelerates.getTaskIds().put(group, taskId);
         }
 
-        // todo: block place event & block placer place event
         if (isCNSlimefun) {
             allTickerLocations.putAll(ExtraTickerCNVersion.getAllTickLocations());
         } else {
@@ -260,6 +278,7 @@ public class Accelerator implements Listener {
                     if (slimefunItem.isDisabled()) {
                         continue;
                     }
+
                     Set<Location> locations = allTickerLocations.get(id);
                     for (Location location : locations) {
                         if (!settings.isTickUnload() && !location.getChunk().isLoaded()) {
@@ -270,8 +289,12 @@ public class Accelerator implements Listener {
                             continue;
                         }
 
+                        Location clone = location.clone();
+                        clone.setYaw(EXTRA_TICKER_FLAG);
                         Set<Location> queue = tickLocations.get(group);
-                        queue.add(location);
+                        synchronized (queue) {
+                            queue.add(clone);
+                        }
                     }
                 }
             }, settings.getExtraTickerDelay(), settings.getExtraTickerPeriod());
@@ -303,5 +326,41 @@ public class Accelerator implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInit(SlimefunItemRegistryFinalizedEvent event) {
         load();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockPlace(@NotNull BlockPlaceEvent event) {
+        if (isCNSlimefun) {
+            SlimefunBlockData config = StorageCacheUtils.getBlock(event.getBlock().getLocation());
+            if (config == null) {
+                return;
+            }
+
+            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getSfId(), k -> new HashSet<>(16));
+            synchronized (locations) {
+                locations.add(event.getBlock().getLocation());
+            }
+        } else {
+            Config config = BlockStorage.getLocationInfo(event.getBlock().getLocation());
+            if (config == null) {
+                return;
+            }
+
+            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getString("id"), k -> new HashSet<>(16));
+            synchronized (locations) {
+                locations.add(event.getBlock().getLocation());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlacerPlace(@NotNull BlockPlacerPlaceEvent event) {
+        SlimefunItem slimefunItem = SlimefunItem.getByItem(event.getItemStack());
+        if (slimefunItem != null) {
+            Set<Location> locations = allTickerLocations.computeIfAbsent(slimefunItem.getId(), k -> new HashSet<>(16));
+            synchronized (locations) {
+                locations.add(event.getBlockPlacer().getLocation());
+            }
+        }
     }
 }
