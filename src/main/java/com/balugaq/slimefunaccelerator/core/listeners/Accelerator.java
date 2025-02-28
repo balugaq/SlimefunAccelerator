@@ -63,9 +63,16 @@ public class Accelerator implements Listener {
             return;
         }
 
-        Set<Location> queue = new HashSet<>(tickLocations.get(group));
+        Set<Location> groupSet = tickLocations.get(group);
+        Set<Location> queue;
+        synchronized (groupSet) {
+            queue = new HashSet<>(groupSet);
+        }
 
         for (Location location : queue) {
+            if (location == null) {
+                continue;
+            }
             SlimefunItem item;
             if (isCNSlimefun) {
                 item = StorageCacheUtils.getSfItem(location);
@@ -129,7 +136,7 @@ public class Accelerator implements Listener {
         Map<String, Set<SlimefunItem>> accelerates = Accelerates.getAccelerates();
         for (Map.Entry<String, Set<SlimefunItem>> entry : accelerates.entrySet()) {
             String group = entry.getKey();
-            tickLocations.put(group, new HashSet<>(256));
+            tickLocations.put(group, ConcurrentHashMap.newKeySet());
             running.put(group, new AtomicBoolean(false));
             Set<SlimefunItem> items = entry.getValue();
             AcceleratorSettings settings = Accelerates.getAccelerateSettings().get(group);
@@ -256,7 +263,7 @@ public class Accelerator implements Listener {
                         continue;
                     }
 
-                    allTickerLocations.computeIfAbsent(slimefunItem.getId(), k -> new HashSet<>(16)).add(location);
+                    allTickerLocations.computeIfAbsent(slimefunItem.getId(), k -> ConcurrentHashMap.newKeySet()).add(location);
                 }
             }
         }
@@ -280,6 +287,9 @@ public class Accelerator implements Listener {
                     }
 
                     Set<Location> locations = allTickerLocations.get(id);
+                    if (locations == null) {
+                        continue;
+                    }
                     for (Location location : locations) {
                         if (!settings.isTickUnload() && !location.getChunk().isLoaded()) {
                             continue;
@@ -336,7 +346,7 @@ public class Accelerator implements Listener {
                 return;
             }
 
-            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getSfId(), k -> new HashSet<>(16));
+            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getSfId(), k -> ConcurrentHashMap.newKeySet());
             synchronized (locations) {
                 locations.add(event.getBlock().getLocation());
             }
@@ -346,7 +356,7 @@ public class Accelerator implements Listener {
                 return;
             }
 
-            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getString("id"), k -> new HashSet<>(16));
+            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getString("id"), k -> ConcurrentHashMap.newKeySet());
             synchronized (locations) {
                 locations.add(event.getBlock().getLocation());
             }
@@ -357,7 +367,7 @@ public class Accelerator implements Listener {
     public void onBlockPlacerPlace(@NotNull BlockPlacerPlaceEvent event) {
         SlimefunItem slimefunItem = SlimefunItem.getByItem(event.getItemStack());
         if (slimefunItem != null) {
-            Set<Location> locations = allTickerLocations.computeIfAbsent(slimefunItem.getId(), k -> new HashSet<>(16));
+            Set<Location> locations = allTickerLocations.computeIfAbsent(slimefunItem.getId(), k -> ConcurrentHashMap.newKeySet());
             synchronized (locations) {
                 locations.add(event.getBlockPlacer().getLocation());
             }
