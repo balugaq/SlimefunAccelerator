@@ -356,7 +356,12 @@ public class Accelerator implements Listener {
                 return;
             }
 
-            Set<Location> locations = allTickerLocations.computeIfAbsent(config.getString("id"), k -> ConcurrentHashMap.newKeySet());
+            String id = config.getString("id");
+            if (id == null) {
+                return;
+            }
+
+            Set<Location> locations = allTickerLocations.computeIfAbsent(id, k -> ConcurrentHashMap.newKeySet());
             synchronized (locations) {
                 locations.add(event.getBlock().getLocation());
             }
