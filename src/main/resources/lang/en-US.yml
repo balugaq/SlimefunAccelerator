@@ -25,7 +25,13 @@ messages:
     added-accelerates: "Accelerated for {id}"
     no-configured-accelerates: "You have not configured the SlimefunAccelerator plugin. Please check the example config.yml file."
     invalid-accelerate-key: "Invalid accelerate key in config.yml: "
+    incompatible-ticker: "Incompatible ticker in config.yml: "
     # {path} = path to config file
     path: "Path: {path}"
     # {value} = value of config option
     value: "Value: {value}"
+    # {async} = async value of config option
+    async: "Async: {async}"
+    ticker:
+      # {synchronized} = synchronized value of the ticker
+      synchronized: "Ticker Synchronized: {synchronized}"

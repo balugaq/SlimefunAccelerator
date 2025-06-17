@@ -26,7 +26,13 @@ messages:
     added-accelerates: "已加速 {id}"
     no-configured-accelerates: "你还没有开始配置插件!"
     invalid-accelerate-key: "无效的物品: "
+    incompatible-ticker: "不兼容的异步配置: "
     # {path} = path to config file
     path: "位置: {path}"
     # {value} = value of config option
     value: "值: {value}"
+    # {async} = async value of config option
+    async: "配置异步: {async}"
+    ticker:
+      # {synchronized} = synchronized value of the ticker
+      synchronized: "机器同步: {synchronized}"

@@ -108,7 +108,13 @@ public class Accelerator implements Listener {
                 }
                 BlockTicker ticker = Accelerates.getTickers().get(item.getId());
                 if (ticker != null) {
-                    ticker.tick(location.getBlock(), item, config);
+                    try {
+                        ticker.tick(location.getBlock(), item, config);
+                    } catch (Throwable e) {
+                        SlimefunAccelerator.getInstance().getLogger().severe("An error occurred while ticking " + item.getId());
+                        SlimefunAccelerator.getInstance().getLogger().severe(e.toString());
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 Config config = BlockStorage.getLocationInfo(location);
@@ -125,7 +131,13 @@ public class Accelerator implements Listener {
                 }
                 BlockTicker ticker = Accelerates.getTickers().get(item.getId());
                 if (ticker != null) {
-                    ticker.tick(location.getBlock(), item, config);
+                    try {
+                        ticker.tick(location.getBlock(), item, config);
+                    } catch (Throwable e) {
+                        SlimefunAccelerator.getInstance().getLogger().severe("An error occurred while ticking " + item.getId());
+                        SlimefunAccelerator.getInstance().getLogger().severe(e.toString());
+                        e.printStackTrace();
+                    }
                 }
             }
         }

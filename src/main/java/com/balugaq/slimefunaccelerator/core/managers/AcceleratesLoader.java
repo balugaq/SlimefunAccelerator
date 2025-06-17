@@ -85,6 +85,11 @@ public class AcceleratesLoader {
                     continue;
                 }
 
+                if (async && ticker.isSynchronized()) {
+                    incompatibleTicker(ACCELERATES_KEY + "." + threadKey + "." + ITEMS_KEY, id, async, ticker);
+                    continue;
+                }
+
                 Accelerates.addAccelerate(threadKey, id);
                 Accelerates.addAccelerateSettings(threadKey, enabled, async, delay, period, removeOriginalTicker, extraTickerEnabled, tickUnload, extraTickerDelay, extraTickerPeriod);
                 Accelerates.getTickers().put(id, ticker);
@@ -103,9 +108,21 @@ public class AcceleratesLoader {
                 }
                 for (String addon : addons) {
                     if (slimefunItem.getAddon().getName().equalsIgnoreCase(addon)) {
-                        Accelerates.addAccelerate(threadKey, slimefunItem.getId());
+                        String id = slimefunItem.getId();
+                        BlockTicker ticker = slimefunItem.getBlockTicker();
+                        if (ticker == null) {
+                            invalidKey(ACCELERATES_KEY + "." + threadKey + "." + ITEMS_KEY, id);
+                            continue;
+                        }
+
+                        if (async && ticker.isSynchronized()) {
+                            incompatibleTicker(ACCELERATES_KEY + "." + threadKey + "." + ITEMS_KEY, id, async, ticker);
+                            continue;
+                        }
+
+                        Accelerates.addAccelerate(threadKey, id);
                         Accelerates.addAccelerateSettings(threadKey, enabled, async, delay, period, removeOriginalTicker, extraTickerEnabled, tickUnload, extraTickerDelay, extraTickerPeriod);
-                        Accelerates.getTickers().put(slimefunItem.getId(), slimefunItem.getBlockTicker());
+                        Accelerates.getTickers().put(id, ticker);
                         SlimefunAccelerator.getInstance().getLogger().info(Lang.getMessage("load.added-accelerates", "id", slimefunItem.getId()));
                         configuredDifferentItem = true;
                     }
@@ -122,5 +139,13 @@ public class AcceleratesLoader {
         SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.invalid-accelerate-key"));
         SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.path", "path", path));
         SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.value", "value", value));
+    }
+
+    public static void incompatibleTicker(String path, String value, boolean async, BlockTicker ticker) {
+        SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.incompatible-ticker"));
+        SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.path", "path", path));
+        SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.value", "value", value));
+        SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.async", "async", async));
+        SlimefunAccelerator.getInstance().getLogger().severe(Lang.getMessage("load.ticker.synchronized", "synchronized", ticker.isSynchronized()));
     }
 }

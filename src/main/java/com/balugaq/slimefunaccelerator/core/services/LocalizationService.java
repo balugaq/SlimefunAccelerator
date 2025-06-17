@@ -60,13 +60,13 @@ public class LocalizationService {
     private final @NotNull File langFolder;
     private final @NotNull List<String> languages;
     private final @NotNull Map<String, Language> langMap;
+    private final @NotNull String colorTagRegex = "<[a-zA-Z0-9_]+>";
+    private final @NotNull Pattern pattern = Pattern.compile(this.colorTagRegex);
     @Getter
     private String idPrefix = "";
     private String itemGroupKey = "categories";
     private String itemsKey = "items";
     private String recipesKey = "recipes";
-    private final @NotNull String colorTagRegex = "<[a-zA-Z0-9_]+>";
-    private final @NotNull Pattern pattern = Pattern.compile(this.colorTagRegex);
 
     @ParametersAreNonnullByDefault
     public LocalizationService(JavaPlugin plugin) {
